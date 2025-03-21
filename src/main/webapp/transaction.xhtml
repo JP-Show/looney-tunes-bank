@@ -1,0 +1,114 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+
+</h:head>
+<h:body>
+
+	<p:commandButton value="transferir" type="button"
+		onclick="PF('dlg3').show();" />
+
+	<p:commandButton value="deposito" type="button"
+		onclick="PF('dlg4').show();" />
+
+	<p:commandButton value="extrato" type="button"
+		onclick="PF('dlg5').show();" />
+
+	<h:outputText value="#{reviewBean.getCurrentMoney()}"> Halo</h:outputText>
+
+	<!-- modal de Transferência -->
+	 
+	<p:dialog header="Transferência" widgetVar="dlg3" minHeight="40"
+		width="350" showEffect="fade" closeOnEscape="true">
+		<h:form prependId="false">
+			<h:panelGrid columns="2">
+				<h:outputLabel for="for" value="Para quem:" />
+				<p:inputNumber id="for" value="#{reviewBean.whoSendId}" />
+				<h:outputLabel for="money" value="Quantidade:" />
+				<p:inputNumber id="money" value="#{reviewBean.money}" />
+				<h:outputLabel for="password" value="Senha:" />
+				<p:password id="password" value="#{reviewBean.password}" />
+			</h:panelGrid>
+			<p:commandButton value="Login" action="#{reviewBean.transfer}"
+				oncomplete="PF('loginDialog').hide()" />
+		</h:form>
+	</p:dialog>
+ 
+	
+	<!-- modal de deposito -->
+	
+	<p:dialog header="Deposito" widgetVar="dlg4" minHeight="40" width="350"
+		showEffect="fade" closeOnEscape="true">
+		<h:form prependId="false">
+			<h:panelGrid columns="2">
+				<h:outputLabel for="money2" value="Quantidade:" />
+				<p:inputNumber id="money2" value="#{reviewBean.money}" decimalPlaces="2" symbol="R$ " />
+				<h:outputLabel for="password2" value="Senha:" />
+				<p:password id="password2" value="#{reviewBean.password}" />
+			</h:panelGrid>
+			<p:commandButton value="Login" action="#{reviewBean.deposit}"
+				oncomplete="PF('loginDialog').hide()" />
+		</h:form>
+	</p:dialog>
+	
+	
+	<!-- modal de extrato  -->
+
+	<p:dialog header="Deposito" widgetVar="dlg5" minHeight="40" width="350"
+		showEffect="fade" closeOnEscape="true">
+		<h:form prependId="false">
+			<p:commandButton value="PDF" ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);"
+				icon="pi pi-arrow-down" styleClass="mr-2" actionListener='#{fileDownloadView.prepareDownload("pdf")}'>
+				<p:fileDownload value="#{fileDownloadView.file}"/>
+			</p:commandButton>
+			<p:commandButton value="Word" ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);"
+				icon="pi pi-arrow-down" styleClass="mr-2" actionListener='#{fileDownloadView.prepareDownload("docx")}'>
+				<p:fileDownload value="#{fileDownloadView.file}"/>
+			</p:commandButton>
+			<p:commandButton value="OFX" ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);"
+				icon="pi pi-arrow-down" styleClass="mr-2" actionListener='#{fileDownloadView.prepareDownload("ofx")}'>
+				<p:fileDownload value="#{fileDownloadView.file}"/>
+			</p:commandButton>
+		</h:form>
+	</p:dialog>
+
+	<!-- tabela -->
+	<p:dataTable value="#{reviewBean.listT}" var="t" rowKey="#{t.getId()}"
+		selection="#{reviewBean.t}" selectionMode="single">
+		<p:column headerText="id">
+			<h:outputText value="#{t.getId()}"></h:outputText>
+		</p:column>
+		<p:column headerText="date">
+			<h:outputText value="#{t.getDate()}"></h:outputText>
+		</p:column>
+		<p:column headerText="money">
+			<h:outputText value="#{t.getMoney()}"></h:outputText>
+		</p:column>
+				<p:column headerText="para quem enviou">
+			<h:outputText value="#{t.getReceiver().getName()}"></h:outputText>
+		</p:column>
+	</p:dataTable>
+
+	<!-- modal for download status -->
+    <p:dialog modal="true" widgetVar="statusDialog" header="Status" draggable="false" closable="false"
+              resizable="false">
+              <i class="pi pi-spinner pi-spin" style="font-size:3rem"></i>
+    </p:dialog>
+
+	<script>
+    function start() {
+        PF('statusDialog').show();
+    }
+
+    function stop() {
+        PF('statusDialog').hide();
+    }
+</script>
+
+</h:body>
+</html>
